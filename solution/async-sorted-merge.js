@@ -58,10 +58,13 @@ async function printLogs(logSources, printer){
   printer.done();
 }
 
-
-async function fetchLogs(logSources, logEntriesPerSource) {
+/*
+ * LogEntries come back as an array of subarrays, merge them.
+ */
+async function fetchLogs(logSources) {
   let logs = await Promise.all(logSources.map(fetchEntriesFromSource));
   let mergedLogs = logs[0];
+
   for(let i = 1;i<logs.length;i++){
     mergedLogs = mergedLogs.concat(logs[i]);
   }
@@ -71,10 +74,15 @@ async function fetchLogs(logSources, logEntriesPerSource) {
   return [];
 } 
 
-
+/*
+ * Grab a number of logEntries per source as set in the 
+ * configuration above. Trying not to let the buffer grow too quickly
+ * lest the space allocation be exceeded
+ */
 async function fetchEntriesFromSource(logSource) {
   let result = [];
   let i = 0;
+     
   while (!logSource.drained && i < fetchSize) {
     const logEntry = {'log':await logSource.popAsync()};
     if (logEntry.log) {
