@@ -38,11 +38,11 @@ module.exports = {
     /*
      * handle duplicates, put nonduplicates in their proper location.
      */
-    if (logEntry.log.date >= logs[start].log.date){
+    if (logEntry.log.date > logs[start].log.date){
       logs.splice(start, 0, logEntry);
       return;
     }
-    if (logEntry.log.date <= logs[end].log.date){
+    if (logEntry.log.date < logs[end].log.date){
       logs.splice(end + 1, 0, logEntry);
       return;
     }
